@@ -8,6 +8,9 @@ import webbrowser
 import os
 import smtplib
 import wnapps_path as wap
+from Py_Weather import get_weather
+import requests
+from bs4 import BeautifulSoup
     
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
@@ -18,6 +21,20 @@ def speak(audio):
     engine = pyttsx3.init()
     engine.say(audio)
     engine.runAndWait()
+
+def get_weather(place):
+    url = 'https://www.google.com/search?&q=weather in ' + place
+    req = requests.get(url)
+    scrap = BeautifulSoup(req.text, 'html.parser')
+    tmp = scrap.find("div", class_="BNeawe").text
+    tm = scrap.find("div", class_="BNeawe tAd8D AP7Wnd").text
+    tm = tm.replace('\n', ' ').split(' ')
+    print('Date & Time is: ' + tm[0] + ' ' + tm[1] + ':' + str(tm[2]).upper())
+    print('Weather is: ' + tm[3])
+    print('Temperature is: '+tmp)
+    speak('Date & Time is: ' + tm[0] + ' ' + tm[1] + ':' + str(tm[2]).upper())
+    speak('Weather is: ' + tm[3])
+    speak('Temperature is: '+tmp)
 
 def greet():
     hour = int(datetime.now().hour)
@@ -50,8 +67,6 @@ def command():
         return "None"
     return query
 
-import smtplib
-
 def send_email():
     speak("Who is the recipient? Please enter the email address.")
     recipient = input("Enter your email address : ")
@@ -78,6 +93,8 @@ def send_email():
 
 
 if __name__ == "__main__":
+    weather = get_weather('Sacramento')
+    speak(weather)
     greet()
     while True:
         query = command().lower()
@@ -144,13 +161,6 @@ if __name__ == "__main__":
             url = query.replace('open', '').strip()
             url = url.replace(' ', '+')
             url += '.com'
-            chrome_path = "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Google Chrome.lnk"
-            if os.path.exists(chrome_path):
-                os.startfile(chrome_path)
-                webbrowser.get(using='chrome').open_new_tab('http://www.google.com/search?q=' + url)
-            else:
-              speak("Google Chrome is not installed on this machine.")
-
             webbrowser.open(url)
 
         elif 'exit' or 'thanks' or 'thank you' in query:
