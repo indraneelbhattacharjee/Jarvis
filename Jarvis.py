@@ -78,7 +78,7 @@ def send_email():
     try:
      server = smtplib.SMTP('smtp.gmail.com', 587) or smtplib.SMTP('smtp-mail.outlook.com', 587)
      server.starttls()
-     email = "indraneelbhattacharjee24@gmail.com"
+     email = "enter your email address here"
      speak("Your email address is ") , speak(email)
      speak("I wont say your password, hahaha !! ")
      password = "rvqxdftaxorvnlse"
